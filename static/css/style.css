@@ -1,0 +1,169 @@
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .containermax {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+			position: relative;
+        }
+		        .container {
+            max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .file-list li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .file-list li a:hover {
+            color: #4CAF50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+                box-shadow: none;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+		
+
+	
+		
+		
+		
+		h2 {
+    font-size: 22px; /* Example size */
+}
+
+		
+		
+ul {
+    list-style-type: none; /* Removes bullets */
+    padding-left: 0; /* Removes padding, if any */
+    text-align: right; /* Align the list items to the right */
+	margin-top:0;
+}
+
+ul li {
+    display: flex; /* Use flexbox */
+    align-items: center; /* Align items vertically */
+    background-color: #f9f9f9; /* Background color */
+    border: 1px solid #ddd; /* Border */
+    padding: 4px; /* Padding */
+    margin-bottom: 5px; /* Margin bottom */
+    border-radius: 4px; /* Border radius */
+}
+
+ul li a {
+    flex-grow: 1; /* Allow link to grow */
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Text color */
+}
+
+ul li a:hover {
+    color: #4CAF50; /* Text color on hover */
+}
+
+
+        .icon {
+          font-size: 10	px;
+
+            margin-left: 4px;
+			margin-right: 2px;
+
+        }
+		
+
+
+.breadcrumb {
+    display: flex; /* Ensure the nav items stay in one line */
+    align-items: center; /* Align items vertically */
+    background-color: #f9f9f9; /* Background color */
+    border: 1px solid #ddd; /* Border */
+    padding: 4px; /* Padding */
+    margin-bottom: 5px; /* Margin bottom */
+    border-radius: 4px; /* Border radius */
+    justify-content: flex-end; /* Justify content to the right */
+}
+
+.breadcrumb ul {
+    list-style-type: none; /* Remove default list styling */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+.breadcrumb li {
+    margin-left: 5px; /* Adjust spacing between list items */
+}
+
+.breadcrumb a {
+    text-decoration: none; /* Remove underline from links */
+	display: flex; /* Ensure the nav items stay in one line */
+    color: black; /* Set link color */
+}
+
+.breadcrumb .icon {
+    margin-left: 5px; /* Adjust spacing between icon and text */
+}

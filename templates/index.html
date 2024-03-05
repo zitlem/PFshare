@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload and Download Files</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+</head>
+<body>
+    <div class="containermax">
+        <div class="container">
+            <h2>Upload a File</h2>
+            <div class="file-input-wrapper" onclick="document.getElementById('file-input').click()">
+                Select File
+            </div>
+
+<form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" id="file-input" onchange="uploadFile()">
+    <!-- Hidden field for the current directory -->
+    <input type="hidden" name="current_path" id="current-path" value="{{ path }}">
+</form>
+
+            <div id="progress-bar">0%</div>
+            <div id="upload-status"></div>
+			<div style="height: 20px;"></div>
+ {% if path %}
+<nav class="breadcrumb">
+<a href="{{ url_for('index') }}">Home</a>
+    {% set breadcrumb_parts = [] %}
+    {% for part in path.split('/') if part %}
+        {% set breadcrumb_parts = breadcrumb_parts + [part] %}
+        <a href="{{ url_for('index', path=path|dirname) }}">
+            {{ part }}
+        </a>
+    {% endfor %}
+</nav>
+ {% endif %}
+
+
+
+         
+            <ul id="file-list">
+
+
+                {% if items %}
+                    {% for item in items %}
+                        <li>
+                            {% if item.is_dir %}
+                                <a href="{{ url_for('index', path=item.path) }}">{{ item.name }}</a>
+            <div class="icon"><i class="fa fa-folder-o"></i></div> 
+         
+         <div class="icon" onclick="window.location.href='{{ url_for('download_directory', dir_path=item.path) }}'"><i class="fa fa-file-archive-o"></i></div>  
+
+                            {% else %}
+                                <!-- File preview link -->
+                                
+                                <a href="javascript:void(0);" onclick="previewFile('{{ url_for('download_file', filename=item.path) }}', '{{ item.name }}')">{{ item.name }}</a>
+
+                                
+
+                                
+                                <div class="icon"><i class="fa fa-file-o"></i></div>
+                                <!-- Download button -->  
+                                <div class="icon" onclick="downloadFile('{{ url_for('download_file', filename=item.path) }}')"><i class="fa fa-download"></i></div>
+                                
+                                
+                                
+                                                        
+                                
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li>No files or directories.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
