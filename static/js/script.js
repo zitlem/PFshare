@@ -21,23 +21,31 @@ function uploadFile() {
         }
     };
 
-    xhr.onload = function() {
-        //console.log("Response status: " + xhr.status);
-        //console.log("Response text: " + xhr.responseText);
-        if (xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            document.getElementById('upload-status').innerText = response.message;
-            if (response.success) {
-                // Wait for 2 seconds before refreshing the page
-                setTimeout(function() {
-                    window.location.reload();
-                }, 2000);
-            }
-        } else {
-            document.getElementById('upload-status').innerText = 'An error occurred during the upload.';
+xhr.onload = function() {
+    //console.log("Response status: " + xhr.status);
+    //console.log("Response text: " + xhr.responseText);
+    if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        document.getElementById('upload-status').innerText = response.message;
+        if (response.success) {
+            // Assuming the response includes the file's name and URL
+            var fileList = document.getElementById('file-list');
+            var newFile = document.createElement('li');
+            var fileLink = document.createElement('a');
+            fileLink.href = response.fileUrl; // Make sure your response includes the URL
+            fileLink.textContent = response.fileName; // And the file name
+            newFile.appendChild(fileLink);
+            fileList.appendChild(newFile);
+
+            // Optionally, clear the file input for the next upload
+            document.getElementById('file-input').value = '';
         }
-        document.getElementById('progress-bar').style.display = 'none';
-    };
+    } else {
+        document.getElementById('upload-status').innerText = 'An error occurred during the upload.';
+    }
+    document.getElementById('progress-bar').style.display = 'none';
+};
+
 
     xhr.send(formData);
 }
@@ -82,27 +90,16 @@ function previewFile(fileUrl, fileName) {
     }
 }
 
-
-
-
-
-
     function downloadFile(fileUrl) {
 			//console.log("Downloading file:", fileUrl, "URL:", fileUrl);
         window.location.href = fileUrl;
     }
 
 	
-	
-	
-	
-	
-	
-	
 window.addEventListener('load', function() {
-    var dropZone = document.querySelector('.containermax');
-    dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileSelect, false);
+    // Attach event listeners to the document for drag and drop functionality
+    document.addEventListener('dragover', handleDragOver, false);
+    document.addEventListener('drop', handleFileSelect, false);
 });
 
 function handleDragOver(event) {
@@ -144,20 +141,9 @@ function uploadFile(file) {
             var response = JSON.parse(xhr.responseText);
             document.getElementById('upload-status').innerText = response.message;
             if (response.success) {
-                var filesList = document.getElementById('file-list');
-                if (!filesList) {
-                    var container = document.querySelector('.container');
-                    var ul = document.createElement('ul');
-                    ul.id = 'file-list';
-                    container.appendChild(ul);
-                    filesList = document.getElementById('file-list');
-                }
-                var li = document.createElement('li');
-                var a = document.createElement('a');
-                a.href = `/downloads/${file.name}`;
-                a.textContent = file.name;
-                li.appendChild(a);
-                filesList.appendChild(li);
+                setTimeout(function() {
+                    window.location.reload(true); 
+                }, 1500); 
             }
         } else {
             document.getElementById('upload-status').innerText = 'An error occurred during the upload.';
@@ -167,5 +153,3 @@ function uploadFile(file) {
 
     xhr.send(formData);
 }
-	
-	

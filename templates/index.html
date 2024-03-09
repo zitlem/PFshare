@@ -15,7 +15,8 @@
             </div>
 
 <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" id="file-input" onchange="uploadFile()">
+   
+	<input type="file" name="file" id="file-input" onchange="uploadFile(this.files[0])">
     <!-- Hidden field for the current directory -->
     <input type="hidden" name="current_path" id="current-path" value="{{ path }}">
 </form>
@@ -25,7 +26,7 @@
 			<div style="height: 20px;"></div>
  {% if path %}
 <nav class="breadcrumb">
-<a href="{{ url_for('index') }}">Home</a>
+<a href="{{ url_for('index') }}" style="margin-right: 10px;">Home</a>
     {% set breadcrumb_parts = [] %}
     {% for part in path.split('/') if part %}
         {% set breadcrumb_parts = breadcrumb_parts + [part] %}

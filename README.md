@@ -16,7 +16,7 @@ A Python app designed for sharing files while on the same network. Especially us
 ## How to use
 0. Clone (or download as zip) this project from github
 0. Open terminal (or command line) in project's folder.
-0. Then run ```python app.py```.
+0. Then run ```python .\app.py```.
 0. Project will display your LAN ip and port (80 by default) in terminal once running.
 0. On another device in the LAN, go to the url:port.
 
