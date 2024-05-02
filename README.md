@@ -16,9 +16,9 @@ A Python app designed for sharing files while on the same network. Especially us
 ## How to use
 0. Clone (or download as zip) this project from github
 0. Open terminal (or command line) in project's folder.
-0. Then run ```python .\app.py```.
-0. Project will display your LAN ip and port (80 by default) in terminal once running.
-0. On another device in the LAN, go to the url:port.
+0. pip install -r requirements.txt
+0. Then run ```python .\main.py```.
+0. On another device in the LAN, go to the url:port (Two file browsers will run simultaneously port80 and Port 81)
 
 
 
@@ -27,3 +27,5 @@ Project saves sent files in "uploads" foler.
 
 
 ![Screenshot](https://raw.githubusercontent.com/zitlem/PFshare/master/uploads/Sample.jpg)
+
+Credit to second file browser https://github.com/jakbin/filebrowser 

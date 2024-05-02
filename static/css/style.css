@@ -16,10 +16,10 @@
             border-radius: 10px;
 			position: relative;
         }
-		        .container {
+		.container {
             max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+			margin-left: auto;
+			margin-right: auto;
 
         }
 
@@ -36,6 +36,63 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+		
+		
+.clipboard {
+    max-width: 400px;
+    display: flex;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: right;
+	border-radius: 4px; /* Border radius */
+	margin-bottom: 5px; /* Margin bottom */
+}
+
+#clipboard-text {
+    flex: 1;
+    height: 50px;
+    max-width: 300px;
+	min-height:40px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.clipboard-button-clear,
+.clipboard-button-update,
+.clipboard-button-copy {
+	width:75px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    flex: 1; /* Make buttons fill entire height */
+	font-size: 15px;
+}
+
+.clipboard-button-clear {
+    margin: 0 0 0 5px;
+}
+.clipboard-button-update {
+    margin: 5px 0 0 5px;
+}
+.clipboard-button-copy {
+    margin: 5px 0 0 5px;
+}
+
+.copied::after {
+    content: "Copied";
+
+}
+
+
 
         #file-input {
             display: none;
@@ -128,7 +185,7 @@ ul li a:hover {
 
 
         .icon {
-          font-size: 10	px;
+          font-size: 14px;
 
             margin-left: 4px;
 			margin-right: 2px;

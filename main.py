@@ -3,9 +3,67 @@ import os
 import werkzeug
 import shutil
 from flask import send_file
+from flask_socketio import SocketIO, emit
+import sqlite3
+
+from pathlib import Path
+from jfb import server
+
+import threading
+import multiprocessing
+import time
+
 
 app = Flask(__name__)
-#app.debug = True  # Enable debug mode
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
+
+# Function to create the database table if it doesn't exist
+def create_table():
+    conn = sqlite3.connect('clipboard.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS clipboard (id INTEGER PRIMARY KEY, text TEXT)''')
+    conn.commit()
+    conn.close()
+
+# Create the table on application startup
+create_table()
+    
+    # Function to get the clipboard text from the database
+def get_clipboard_text():
+    conn = sqlite3.connect('clipboard.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT text FROM clipboard ORDER BY id DESC LIMIT 1')
+    result = cursor.fetchone()
+    conn.close()
+    return result[0] if result else ""
+
+# Function to set the clipboard text in the database
+def set_clipboard_text(text):
+    conn = sqlite3.connect('clipboard.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO clipboard (text) VALUES (?)', (text,))
+    conn.commit()
+    conn.close()
+
+
+
+@socketio.on('connect')
+def handle_connect():
+    # Send current clipboard text to newly connected client
+    text = get_clipboard_text()
+    emit('clipboard_text', {'text': text})
+
+@socketio.on('update_clipboard_text')
+def handle_update_clipboard_text(data):
+    text = data['text']
+    set_clipboard_text(text)
+    emit('clipboard_text', {'text': text}, broadcast=True)
+
+
+
+
+
 
 # Directory where uploaded files will be stored
 BASE_DIR = 'uploads'
@@ -20,9 +78,10 @@ def dirname_filter(path):
 
 app.jinja_env.filters['dirname'] = dirname_filter
 
-# Function to list files and directories
+
 def list_files_and_dirs(directory):
     items = []
+    print("Listing files and directories in:", directory)  # Add this line for debugging
     for filename in os.listdir(directory):
         # Skip hidden files and directories
         if filename.startswith('.'):
@@ -92,6 +151,7 @@ def index(path):
             try:
                 file.save(file_path)
                 return jsonify({'message': 'File uploaded successfully', 'success': True})
+
             except Exception as e:
                 print(f"Error saving file: {e}")
                 return jsonify({'message': 'Error saving file', 'success': False})
@@ -102,13 +162,6 @@ def index(path):
 
 
 
-
-
-
-
-
-
-
 @app.route('/downloads/<path:filename>')
 def download_file(filename):
     # Normalize the file path
@@ -116,8 +169,30 @@ def download_file(filename):
     return send_from_directory(BASE_DIR, normalized_filename, as_attachment=True)
 
     
-    
+def run_server(address, port, path):
+    server(address, port, path)   
+
+def main():
+    return run_server("0.0.0.0", 81, Path.cwd() / 'uploads')
     
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+def server1():
+    socketio.run(app, host='0.0.0.0', port=80)
+
+def server2():
+    raise SystemExit(main())
+
+    
+
+if __name__ == "__main__":
+    # Create multiprocessing processes
+    p1 = multiprocessing.Process(target=server1)
+    p2 = multiprocessing.Process(target=server2)
+
+    # Start processes
+    p1.start()
+    p2.start()
+
+    # Wait for both processes to finish
+    p1.join()
+    p2.join()

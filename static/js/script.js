@@ -1,54 +1,3 @@
-function uploadFile() {
-    var fileInput = document.getElementById('file-input');
-    var currentPathInput = document.getElementById('current-path');
-    var file = fileInput.files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    if (currentPathInput) {
-        formData.append('current_path', currentPathInput.value);
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/', true);
-
-    xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-            var percentComplete = (e.loaded / e.total) * 100;
-            var progressBar = document.getElementById('progress-bar');
-            progressBar.style.width = percentComplete + '%';
-            progressBar.textContent = Math.round(percentComplete) + '%';
-            progressBar.style.display = 'block';
-        }
-    };
-
-xhr.onload = function() {
-    //console.log("Response status: " + xhr.status);
-    //console.log("Response text: " + xhr.responseText);
-    if (xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        document.getElementById('upload-status').innerText = response.message;
-        if (response.success) {
-            // Assuming the response includes the file's name and URL
-            var fileList = document.getElementById('file-list');
-            var newFile = document.createElement('li');
-            var fileLink = document.createElement('a');
-            fileLink.href = response.fileUrl; // Make sure your response includes the URL
-            fileLink.textContent = response.fileName; // And the file name
-            newFile.appendChild(fileLink);
-            fileList.appendChild(newFile);
-
-            // Optionally, clear the file input for the next upload
-            document.getElementById('file-input').value = '';
-        }
-    } else {
-        document.getElementById('upload-status').innerText = 'An error occurred during the upload.';
-    }
-    document.getElementById('progress-bar').style.display = 'none';
-};
-
-
-    xhr.send(formData);
-}
 
 function previewFile(fileUrl, fileName) {
     // Encode the fileUrl for use in web URLs
@@ -90,11 +39,20 @@ function previewFile(fileUrl, fileName) {
     }
 }
 
+
+
+
+
+
     function downloadFile(fileUrl) {
 			//console.log("Downloading file:", fileUrl, "URL:", fileUrl);
         window.location.href = fileUrl;
     }
 
+	
+	
+	
+	
 	
 window.addEventListener('load', function() {
     // Attach event listeners to the document for drag and drop functionality
@@ -137,13 +95,16 @@ function uploadFile(file) {
     };
 
     xhr.onload = function() {
+        //console.log("Response status: " + xhr.status);
+        //console.log("Response text: " + xhr.responseText);
         if (xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             document.getElementById('upload-status').innerText = response.message;
             if (response.success) {
+                // Wait for 2 seconds before refreshing the page
                 setTimeout(function() {
-                    window.location.reload(true); 
-                }, 1500); 
+                    window.location.reload();
+                }, 500);
             }
         } else {
             document.getElementById('upload-status').innerText = 'An error occurred during the upload.';
@@ -153,3 +114,98 @@ function uploadFile(file) {
 
     xhr.send(formData);
 }
+
+
+
+function copyToClipboard() {
+    //console.log("copyToClipboard function called");
+    var button = document.querySelector('.clipboard-button-copy');
+    var originalText = button.textContent; // Save the original text
+    var text = document.getElementById("clipboard-text").value;
+
+    // Attempt to use the Clipboard API
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            //console.log('Text copied to clipboard');
+            button.textContent = 'Copied'; // Replace button text with "Copied"
+            setTimeout(function() {
+                button.textContent = originalText; // Revert back to original text
+            }, 5000); // Change back to original text after 5 seconds
+        }).catch(function(err) {
+            //console.error('Could not copy text using Clipboard API: ', err);
+            // Fallback method
+            fallbackCopyTextToClipboard(text, originalText);
+        });
+    } else {
+        // Fallback method
+        fallbackCopyTextToClipboard(text, originalText);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, originalText) {
+    var button = document.querySelector('.clipboard-button-copy');
+
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        //console.log('Fallback: Text copy ' + msg);
+        
+        // Replace the button text with "Copied"
+        button.textContent = 'Copied';
+        
+        // Revert back to original text after 5 seconds
+        setTimeout(function() {
+            button.textContent = originalText; // Revert back to original text
+        }, 5000); // Change back to original text after 5 seconds
+    } catch (err) {
+        //console.error('Fallback: Oops, unable to copy text: ', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+
+
+function setClipboardText(text) {
+    fetch('/set_clipboard_text', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: text })
+    })
+    .then(response => response.json())
+    .then(data => {
+        //console.log(data.message);
+    })
+    .catch(error => {
+        //console.error('Error setting clipboard text:', error);
+    });
+}
+
+
+
+
+function getClipboardText() {
+    fetch('/get_clipboard_text')
+    .then(response => response.json())
+    .then(data => {
+       // console.log('Clipboard text:', data.text);
+        // Use the clipboard text as needed
+    })
+    .catch(error => {
+        //console.error('Error getting clipboard text:', error);
+    });
+}
+
+function clearClipboardText() {
+    document.getElementById("clipboard-text").value = ''; // Clear the text area
+	updateClipboardText();
+}
+

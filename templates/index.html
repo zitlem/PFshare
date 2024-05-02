@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+	
+
 </head>
 <body>
     <div class="containermax">
@@ -13,61 +17,65 @@
             <div class="file-input-wrapper" onclick="document.getElementById('file-input').click()">
                 Select File
             </div>
+			
 
-<form id="upload-form" action="/" method="post" enctype="multipart/form-data">
-   
-	<input type="file" name="file" id="file-input" onchange="uploadFile(this.files[0])">
-    <!-- Hidden field for the current directory -->
-    <input type="hidden" name="current_path" id="current-path" value="{{ path }}">
-</form>
 
+			
+			
+            <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="file-input" onchange="uploadFile(this.files[0])">
+                <!-- Hidden field for the current directory -->
+                <input type="hidden" name="current_path" id="current-path" value="{{ path }}">
+            </form>
             <div id="progress-bar">0%</div>
             <div id="upload-status"></div>
-			<div style="height: 20px;"></div>
- {% if path %}
-<nav class="breadcrumb">
-<a href="{{ url_for('index') }}" style="margin-right: 10px;">Home</a>
-    {% set breadcrumb_parts = [] %}
-    {% for part in path.split('/') if part %}
-        {% set breadcrumb_parts = breadcrumb_parts + [part] %}
-        <a href="{{ url_for('index', path=path|dirname) }}">
-            {{ part }}
-        </a>
-    {% endfor %}
-</nav>
- {% endif %}
+            <div style="height: 20px;"></div>
+			
+			
+			
+
+			
+<div class="clipboard">
+    <textarea id="clipboard-text" placeholder="Clipboard" oninput="updateClipboardText()"></textarea>
+    <div class="button-container">
+		<div class="clipboard-button-clear" onclick="clearClipboardText()">Clear</div>
+      <!-- <div class="clipboard-button-update" onclick="updateClipboardText()">Update</div>-->
+        <div class="clipboard-button-copy" onclick="copyToClipboard()">Copy</div>
+    </div>
+</div>
 
 
 
-         
+			
+			
+			
+			
+            {% if path %}
+                <nav class="breadcrumb">
+                    <a href="{{ url_for('index') }}">Home &nbsp &nbsp</a>
+                    {% set breadcrumb_parts = [] %}
+                    {% for part in path.split('/') if part %}
+                        {% set breadcrumb_parts = breadcrumb_parts + [part] %}
+                        <a href="{{ url_for('index', path=path|dirname) }}">
+                            {{ part }}
+                        </a>
+                    {% endfor %}
+                </nav>
+            {% endif %}
             <ul id="file-list">
-
-
                 {% if items %}
                     {% for item in items %}
                         <li>
                             {% if item.is_dir %}
                                 <a href="{{ url_for('index', path=item.path) }}">{{ item.name }}</a>
-            <div class="icon"><i class="fa fa-folder-o"></i></div> 
-         
-         <div class="icon" onclick="window.location.href='{{ url_for('download_directory', dir_path=item.path) }}'"><i class="fa fa-file-archive-o"></i></div>  
-
+                                <div class="icon"><i class="fa fa-folder-o"></i></div> 
+                                <div class="icon" onclick="window.location.href='{{ url_for('download_directory', dir_path=item.path) }}'"><i class="fa fa-file-archive-o"></i></div>  
                             {% else %}
                                 <!-- File preview link -->
-                                
                                 <a href="javascript:void(0);" onclick="previewFile('{{ url_for('download_file', filename=item.path) }}', '{{ item.name }}')">{{ item.name }}</a>
-
-                                
-
-                                
                                 <div class="icon"><i class="fa fa-file-o"></i></div>
                                 <!-- Download button -->  
                                 <div class="icon" onclick="downloadFile('{{ url_for('download_file', filename=item.path) }}')"><i class="fa fa-download"></i></div>
-                                
-                                
-                                
-                                                        
-                                
                             {% endif %}
                         </li>
                     {% endfor %}
@@ -78,6 +86,22 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script type="text/javascript" charset="utf-8">
+    //var socket = io.connect('http://' + document.domain + ':' + location.port);
+	var socket = io.connect('http://' + document.domain + ':' + location.port, { transports: ['websocket'] });// default is ['polling', 'websocket']
+				  
+
+    // Receive current clipboard text from the server
+    socket.on('clipboard_text', function(data) {
+        document.getElementById('clipboard-text').value = data.text;
+    });
+
+    // Function to update clipboard text
+    function updateClipboardText() {
+        var text = document.getElementById('clipboard-text').value;
+        socket.emit('update_clipboard_text', {'text': text});
+    }
+</script>
+
 </body>
 </html>
