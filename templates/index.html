@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+
+
+
 <html>
 <head>
     <title>Upload and Download Files</title>
@@ -8,9 +12,21 @@
 	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
 	
+<script src="{{ url_for('static', filename='js/three.r134.min.js') }}"></script>
+
+
+
+
+
+
+
 
 </head>
 <body>
+    <!-- Vanta background -->
+    <div id="vanta-bg"></div>
+	
+	
     <div class="containermax">
         <div class="container">
             <h2>Upload a File</h2>
@@ -102,6 +118,80 @@
         socket.emit('update_clipboard_text', {'text': text});
     }
 </script>
+
+
+
+
+
+	
+<script>
+  // List of script pairs
+  const scriptPairs = [
+    
+	
+	[
+      "{{ url_for('static', filename='js/vanta.fog.min.js') }}",
+      "{{ url_for('static', filename='js/fog-settings.js') }}"
+    ],
+	
+    [
+      "{{ url_for('static', filename='js/vanta.waves.min.js') }}",
+      "{{ url_for('static', filename='js/waves-settings.js') }}"
+    ],
+	[
+      "{{ url_for('static', filename='js/vanta.birds.min.js') }}",
+      "{{ url_for('static', filename='js/birds-settings.js') }}"
+    ],
+	[
+      "{{ url_for('static', filename='js/vanta.clouds.min.js') }}",
+      "{{ url_for('static', filename='js/clouds-settings.js') }}"
+    ]
+	/*
+	,
+	[
+      "{{ url_for('static', filename='js/vanta.dots.min.js') }}",
+      "{{ url_for('static', filename='js/dots-settings.js') }}"
+    ],
+	
+	[
+      "{{ url_for('static', filename='js/vanta.rings.min.js') }}",
+      "{{ url_for('static', filename='js/rings-settings.js') }}"
+    ],
+	[
+      "{{ url_for('static', filename='js/vanta.net.min.js') }}",
+      "{{ url_for('static', filename='js/net-settings.js') }}"
+    ],
+	[
+      "{{ url_for('static', filename='js/vanta.halo.min.js') }}",
+      "{{ url_for('static', filename='js/halo-settings.js') }}"
+    ]
+	
+	*/
+	
+  ];
+
+  // Pick a random pair
+  const randomPair = scriptPairs[Math.floor(Math.random() * scriptPairs.length)];
+
+  // Load each script dynamically
+  randomPair.forEach(src => {
+    const script = document.createElement('script');
+    script.src = src;
+    document.body.appendChild(script);
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>
