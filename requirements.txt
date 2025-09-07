@@ -1,5 +1,0 @@
-Flask==3.0.2
-Flask_SocketIO==5.3.5
-Werkzeug==3.0.2
-Gevent==24.2.1
-markupsafe
